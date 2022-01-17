@@ -1,0 +1,202 @@
+Database        : crn:v1:bluemix:public:dashdb-for-transactions:us-south:a/c7135714cb93471aa4ef0948aa193665:327ff54a-9e40-4ebf-ba50-890d51cb7f58::
+Host name       : db2-icd-prod-us-south-db-0abbw-private-alb.db2.databases.appdomain.cloud                                                        
+Authorization Id: fzm79448                                                                                                                        
+Run method      : JDBC                                                                                                                            
+Date            : Jan 17, 2022 1:50:34 PM                                                                                                         
+Status          : completed                                                                                                                       
+
+--Q1 
+select unique(launch_site) from spacex
+
+--Q2 
+select * from spacex where launch_site  like 'CCA%' limit 5
+
+--Q3
+select sum(payload_mass__kg_) from spacex where customer = 'NASA (CRS)'
+
+--Q4
+select avg(payload_mass__kg_) from spacex where booster_version='F9 v1.1'
+
+--Q5
+select min(date) from spacex where landing__outcome='Success (ground pad)'
+
+--Q6
+select unique(booster_version) from spacex where landing__outcome='Success (drone ship)' and payload_mass__kg_ between 4000 and 6000
+
+--Q7
+select mission_outcome,count(mission_outcome) from spacex group by mission_outcome
+
+--Q8
+select unique(booster_version) from spacex where payload_mass__kg_ = (select max(payload_mass__kg_) from spacex)
+
+--Q9
+select booster_version,launch_site from spacex where year(date)=2015 and landing__outcome='Failure (drone ship)'
+
+--Q10
+select landing__outcome,count(landing__outcome) as counts from spacex where date between '2010-06-04' and '2017-03-20' group by landing__outcome order by counts desc
+--select unique(booster_version) from spacex
+--select unique(landing__outcome) from spacex;
+--select unique(mission_outcome) from spacex
+--genqselect * from spacex limit 3;
+--select booster_version, sum(payload_mass__kg_) from spacex group by booster_version
+--select unique(customer) from spacex;
+
+
+
+=======================================================================================
+--Q1 
+select unique(launch_site) from spacex
+
+Run time (seconds): 0.004    
+Status            : succeeded
+
+LAUNCH_SITE 
+------------
+CCAFS LC-40 
+CCAFS SLC-40
+KSC LC-39A  
+VAFB SLC-4E 
+
+
+=======================================================================================
+--Q2 
+select * from spacex where launch_site  like 'CCA%' limit 5
+
+Run time (seconds): 0.004    
+Status            : succeeded
+
+DATE       TIME__UTC_ BOOSTER_VERSION LAUNCH_SITE PAYLOAD                                                       PAYLOAD_MASS__KG_ ORBIT     CUSTOMER        MISSION_OUTCOME LANDING__OUTCOME   
+---------- ---------- --------------- ----------- ------------------------------------------------------------- ----------------- --------- --------------- --------------- -------------------
+2010-06-04 18:45:00   F9 v1.0  B0003  CCAFS LC-40 Dragon Spacecraft Qualification Unit                                          0 LEO       SpaceX          Success         Failure (parachute)
+2010-12-08 15:43:00   F9 v1.0  B0004  CCAFS LC-40 Dragon demo flight C1, two CubeSats, barrel of Brouere cheese                 0 LEO (ISS) NASA (COTS) NRO Success         Failure (parachute)
+2012-05-22 07:44:00   F9 v1.0  B0005  CCAFS LC-40 Dragon demo flight C2                                                       525 LEO (ISS) NASA (COTS)     Success         No attempt         
+2012-10-08 00:35:00   F9 v1.0  B0006  CCAFS LC-40 SpaceX CRS-1                                                                500 LEO (ISS) NASA (CRS)      Success         No attempt         
+2013-03-01 15:10:00   F9 v1.0  B0007  CCAFS LC-40 SpaceX CRS-2                                                                677 LEO (ISS) NASA (CRS)      Success         No attempt         
+
+
+=======================================================================================
+--Q3
+select sum(payload_mass__kg_) from spacex where customer = 'NASA (CRS)'
+
+Run time (seconds): 0.006    
+Status            : succeeded
+
+1    
+-----
+45596
+
+
+=======================================================================================
+--Q4
+select avg(payload_mass__kg_) from spacex where booster_version='F9 v1.1'
+
+Run time (seconds): 0.003    
+Status            : succeeded
+
+1   
+----
+2928
+
+
+=======================================================================================
+--Q5
+select min(date) from spacex where landing__outcome='Success (ground pad)'
+
+Run time (seconds): 0.006    
+Status            : succeeded
+
+1         
+----------
+2015-12-22
+
+
+=======================================================================================
+--Q6
+select unique(booster_version) from spacex where landing__outcome='Success (drone ship)' and payload_mass__kg_ between 4000 and 6000
+
+Run time (seconds): 0.006    
+Status            : succeeded
+
+BOOSTER_VERSION
+---------------
+F9 FT  B1021.2 
+F9 FT  B1031.2 
+F9 FT B1022    
+F9 FT B1026    
+
+
+=======================================================================================
+--Q7
+select mission_outcome,count(mission_outcome) from spacex group by mission_outcome
+
+Run time (seconds): 0.003    
+Status            : succeeded
+
+MISSION_OUTCOME                  2 
+-------------------------------- --
+Failure (in flight)               1
+Success                          99
+Success (payload status unclear)  1
+
+
+=======================================================================================
+--Q8
+select unique(booster_version) from spacex where payload_mass__kg_ = (select max(payload_mass__kg_) from spacex)
+
+Run time (seconds): 0.007    
+Status            : succeeded
+
+BOOSTER_VERSION
+---------------
+F9 B5 B1048.4  
+F9 B5 B1048.5  
+F9 B5 B1049.4  
+F9 B5 B1049.5  
+F9 B5 B1049.7  
+F9 B5 B1051.3  
+F9 B5 B1051.4  
+F9 B5 B1051.6  
+F9 B5 B1056.4  
+F9 B5 B1058.3  
+F9 B5 B1060.2  
+F9 B5 B1060.3  
+
+
+=======================================================================================
+--Q9
+select booster_version,launch_site from spacex where year(date)=2015 and landing__outcome='Failure (drone ship)'
+
+Run time (seconds): 0.003    
+Status            : succeeded
+
+BOOSTER_VERSION LAUNCH_SITE
+--------------- -----------
+F9 v1.1 B1012   CCAFS LC-40
+F9 v1.1 B1015   CCAFS LC-40
+
+
+=======================================================================================
+--Q10
+select landing__outcome,count(landing__outcome) as counts from spacex where date between '2010-06-04' and '2017-03-20' group by landing__outcome order by counts desc
+--select unique(booster_version) from spacex
+--select unique(landing__outcome) from spacex;
+--select unique(mission_outcome) from spacex
+--genqselect * from spacex limit 3;
+--select booster_version, sum(payload_mass__kg_) from spacex group by booster_version
+--select unique(customer) from spacex;
+
+Run time (seconds): 0.007    
+Status            : succeeded
+
+LANDING__OUTCOME       COUNTS
+---------------------- ------
+No attempt                 10
+Failure (drone ship)        5
+Success (drone ship)        5
+Controlled (ocean)          3
+Success (ground pad)        3
+Failure (parachute)         2
+Uncontrolled (ocean)        2
+Precluded (drone ship)      1
+
+
